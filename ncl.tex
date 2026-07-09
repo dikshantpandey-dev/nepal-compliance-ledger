@@ -1,225 +1,176 @@
-\documentclass[10pt,letterpaper]{article}
+\documentclass[11pt, letterpaper]{article}
 
-\usepackage[margin=0.78in]{geometry}
-\usepackage[hidelinks]{hyperref}
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{booktabs}
 \usepackage{tabularx}
-\usepackage{enumitem}
-\usepackage{xcolor}
+\usepackage{hyperref}
 \usepackage{titlesec}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,fit,calc}
-\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\usepackage{caption}
+\usepackage{abstract}
+\usepackage{float}
 
-\definecolor{ink}{HTML}{111827}
-\definecolor{muted}{HTML}{4B5563}
-\definecolor{blue}{HTML}{2563EB}
-\definecolor{green}{HTML}{059669}
-\definecolor{orange}{HTML}{EA580C}
-\definecolor{purple}{HTML}{7C3AED}
-\definecolor{panel}{HTML}{F8FAFC}
+% --- SETTINGS ---
+\geometry{top=1in, bottom=1in, left=1in, right=1in}
+\linespread{1.15}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black}
 
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{4pt}
-\titleformat{\section}{\large\bfseries\color{ink}}{\thesection}{0.6em}{}
-\titleformat{\subsection}{\normalsize\bfseries\color{ink}}{\thesubsection}{0.6em}{}
-\setlist[itemize]{leftmargin=1.25em,itemsep=2pt,topsep=2pt}
-
-\newcommand{\metric}[3]{
-  \begin{minipage}[t]{0.22\linewidth}
-  \centering
-  {\Large \textbf{\color{blue}#1}}\\
-  {\small \textbf{#2}}\\
-  {\scriptsize \color{muted}#3}
-  \end{minipage}
-}
+% --- TITLE DATA ---
+\title{\textbf{Algorithmic Supervision of High-Frequency Financial Flows: \\ A Permissioned Ledger Simulation for AML Compliance in Nepal}}
+\author{\textbf{Dikshant Pandey} \\ Kathmandu, Nepal}
+\date{January 30, 2026}
 
 \begin{document}
 
-\begin{center}
-{\LARGE \textbf{Algorithmic Supervision of High-Frequency Financial Flows}}\\
-\vspace{2pt}
-{\large A Permissioned Blockchain and Agent-Based Simulation for AML Compliance in Nepal}\\
-\vspace{4pt}
-\textbf{Dikshant Pandey}\\
-Kathmandu, Nepal\\
-January 30, 2026\\
-\vspace{3pt}
-Version 2.0: 100k transaction reproducible simulation
-\end{center}
+\maketitle
 
 \begin{abstract}
-\noindent This research presents the Nepal Compliance Ledger (NCL), a regulatory technology prototype for supervising high-frequency financial flows before settlement. The updated implementation combines an agent-based transaction market, sliding-window velocity checks, bounded graph-cycle detection, and a permissioned blockchain audit layer with Merkle roots, hash-linked blocks, policy-version binding, and validator quorum signatures. A deterministic simulation with 10,000 agents and 100,000 transactions produced 38,566 true positives, 39 false positives, 6,601 false negatives, and 54,794 true negatives. The system achieved 99.90\% precision, 85.39\% recall, and an F1 score of 0.9207 while sealing 196 auditable blocks with intact chain verification. These results suggest that a hub-and-spoke compliance ledger can reduce AML latency while preserving a tamper-evident regulatory audit trail.
+\noindent \textbf{Abstract.} This research presents the \textit{Nepal Compliance Ledger (NCL)}, a regulatory technology prototype for supervising high-frequency financial flows before settlement. The system combines an \textbf{Agent-Based Model (ABM)}, a sliding-window velocity detector, bounded graph-cycle detection, and a permissioned ledger audit layer with Merkle roots, hash-linked blocks, policy binding, and simulated validator quorum signatures. The upgraded implementation simulates $N=10{,}000$ autonomous actors and processes $100{,}000$ transactions. The run produced $38{,}566$ true positives, $39$ false positives, $6{,}601$ false negatives, and $54{,}794$ true negatives, achieving a detection precision of \textbf{99.90\%}, recall of \textbf{85.39\%}, and an F1 score of \textbf{0.9207}. The ledger sealed $196$ auditable blocks with intact chain verification, showing how algorithmic supervision and tamper-evident audit infrastructure can be combined in a reproducible AML compliance simulation.
 \end{abstract}
 
 \section{Introduction}
+AML supervision often suffers from settlement latency: suspicious flows may only be discovered after money has already moved across institutions. In Nepal and similar financial environments, \textit{structuring} or smurfing remains a practical evasion strategy, where a larger illicit transfer is fragmented into many smaller payments below scalar reporting thresholds.
 
-Anti-money laundering (AML) enforcement in developing financial systems faces a timing problem. Suspicious flows are often detected after settlement, after funds have already moved across institutions or been fragmented into low-value transfers. Structuring, also known as smurfing, exploits this weakness by splitting a larger illicit amount into many smaller transactions that sit below scalar reporting thresholds.
+This research treats the monitoring problem as a combination of velocity, graph topology, and auditability. Instead of asking only whether a single transaction exceeds a limit, NCL evaluates whether an actor is transacting too frequently inside a rolling time window and whether a new transfer closes a short circular path. The ledger layer records compliance decisions in a hash-chained permissioned structure so participating banks and regulators can verify the audit trail.
 
-NCL reframes the problem as one of transaction velocity and graph topology. Instead of asking only whether a single payment exceeds a threshold, the system evaluates whether a sender is moving too frequently inside a rolling time window and whether a new edge closes a short circular path. The updated implementation also records every compliance decision into a permissioned blockchain-style ledger so that banks and regulators can audit a shared, tamper-evident history.
+The velocity of funds can be represented as:
+\begin{equation}
+    V = \frac{\sum_{i=1}^{n} \Delta \text{Amount}_i}{\Delta \text{Time}}
+\end{equation}
+The core hypothesis is that a permissioned compliance environment can enforce velocity and topology constraints before settlement, reducing the delay between suspicious behavior and supervisory response.
 
 \section{Methodology}
 
-\subsection{Hub-and-Spoke Architecture}
+\subsection{Architectural Simulation}
+The Hub-and-Spoke simulation environment models the transactional logic of a permissioned banking network. It consists of four operational layers:
+\begin{enumerate}
+    \item \textbf{User Interface Layer:} Simulates mobile banking transaction requests.
+    \item \textbf{Compliance Brain:} Runs identity validation, velocity checks, and graph-cycle detection.
+    \item \textbf{Immutable Ledger Layer:} Records clean and flagged decisions in a hash-linked audit structure.
+    \item \textbf{Regulator Output Layer:} Provides a real-time supervisory feed for audit review.
+\end{enumerate}
 
-The project preserves the original hub-and-spoke design: commercial nodes submit transaction requests, a regulatory compliance brain evaluates them, clean transactions proceed to participating banks, and every decision is written into an immutable audit ledger with a regulator dashboard feed.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.84\textheight, keepaspectratio]{architecture.png}
+    \caption{System Architecture: The Hub-and-Spoke Model}
+    \label{fig:arch}
+\end{figure}
 
-\begin{center}
-\begin{tikzpicture}[
-  node distance=7mm,
-  layer/.style={rectangle, draw=black!20, fill=panel, minimum width=62mm, minimum height=13mm, align=center},
-  boxblue/.style={rectangle, rounded corners=2pt, draw=blue!70, fill=blue!7, thick, minimum width=34mm, minimum height=10mm, align=center},
-  boxorange/.style={rectangle, rounded corners=2pt, draw=orange!75, fill=orange!8, thick, minimum width=36mm, minimum height=10mm, align=center},
-  boxgreen/.style={rectangle, rounded corners=2pt, draw=green!70, fill=green!8, thick, minimum width=29mm, minimum height=10mm, align=center},
-  boxpurple/.style={rectangle, rounded corners=2pt, draw=purple!70, fill=purple!8, thick, minimum width=40mm, minimum height=10mm, align=center},
-  arrow/.style={-{Latex[length=2mm]}, thick, draw=muted}
-]
-\node[layer] (uiLayer) {};
-\node[boxblue] (ui) at (uiLayer.center) {Mobile Banking App\\User A};
-\node[above=1mm of uiLayer] {\scriptsize LAYER 1: User Interface};
+\subsection{Algorithmic Logic 1: Sliding Window Protocol}
+To address the weakness of fixed-window counters, the NCL architecture implements a \textit{sliding-window log}. For each sender, the engine keeps a queue of recent transaction timestamps and prunes values outside the policy window.
+\begin{equation}
+    \text{Count}(a, T_{now}) = \sum_{i=1}^{n} \mathbb{I}(T_{now} - t_i < W)
+\end{equation}
+where $\mathbb{I}$ is the indicator function, $a$ is the sender, and $W=300\,\text{s}$ is the window size. A transaction is flagged when the sender's count reaches the threshold $\tau=5$ within the active window.
 
-\node[layer, below=13mm of uiLayer, minimum height=53mm, minimum width=82mm] (brainLayer) {};
-\node[above=1mm of brainLayer] {\scriptsize LAYER 2: Compliance Brain};
-\node[boxorange] (kyc) at ($(brainLayer.center)+(0,11mm)$) {KYC / Identity\\Validator};
-\node[boxorange, below=7mm of kyc] (engine) {Compliance Algorithms\\1. Sliding Window\\2. Graph Cycle Detector};
-\node[boxgreen, below left=8mm and -2mm of engine] (bankA) {Bank A\\Nabil};
-\node[boxgreen, below right=8mm and -2mm of engine] (bankB) {Bank B\\Global IME};
+\subsection{Algorithmic Logic 2: Graph Cycle Detection}
+Scalar AML checks cannot reliably detect \textit{layering}, where funds are routed through multiple accounts to obscure origin. NCL models transactions as a directed graph $G=(V,E)$. For a proposed transaction $e(u,v)$, the system checks whether a short path already exists from $v$ back to $u$:
+\begin{equation}
+    v \rightarrow \dots \rightarrow u \quad \text{where} \quad |P| \le k
+\end{equation}
+If funds return to the origin node $u$ within $k=3$ hops, the topology is flagged as a circular trading ring. The implementation also uses a $900\,\text{s}$ graph memory window so the detector focuses on recent layering behavior.
 
-\node[layer, below=14mm of brainLayer, minimum height=22mm, minimum width=74mm] (ledgerLayer) {};
-\node[above=1mm of ledgerLayer] {\scriptsize LAYER 3: Permissioned Immutable Ledger};
-\node[boxpurple] (ledger) at (ledgerLayer.center) {Merkle Block Ledger\\Hash chain + 4/5 quorum};
+\setcounter{algorithm}{1}
+\begin{algorithm}[H]
+\caption{Recursive Cycle Detection (DFS)}
+\begin{algorithmic}[1]
+\Function{DetectCycle}{$origin, current, depth$}
+    \If{$current == origin$ \textbf{AND} $depth > 0$}
+        \State \Return \textbf{TRUE} \Comment{Cycle found}
+    \EndIf
+    \If{$depth \ge MAX\_DEPTH$}
+        \State \Return \textbf{FALSE}
+    \EndIf
+    \For{each $neighbor$ in $AdjacencyList[current]$}
+        \If{\Call{DetectCycle}{$origin, neighbor, depth+1$}}
+            \State \Return \textbf{TRUE}
+        \EndIf
+    \EndFor
+    \State \Return \textbf{FALSE}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
-\node[layer, below=12mm of ledgerLayer, minimum height=20mm, minimum width=54mm] (auditLayer) {};
-\node[above=1mm of auditLayer] {\scriptsize LAYER 4: Regulator Output};
-\node[boxblue] (dash) at (auditLayer.center) {NRB Regulator\\Dashboard};
+\subsection{Algorithmic Logic 3: Permissioned Ledger Verification}
+The advanced NCL prototype upgrades the earlier append-only log into a permissioned block ledger. Every compliance decision is converted into a canonical audit record and batched into blocks of $512$ records. Each block header contains the previous block hash, Merkle root, policy hash, proposer node, transaction count, and validator signatures.
 
-\draw[arrow] (ui) -- (kyc);
-\draw[arrow] (kyc) -- (engine);
-\draw[arrow] (engine) -- (bankA);
-\draw[arrow] (engine) -- (bankB);
-\draw[arrow] (engine.west) .. controls +(-24mm,-5mm) and +(-18mm,8mm) .. (ledger.west);
-\draw[arrow] (bankA) -- (ledger);
-\draw[arrow] (bankB) -- (ledger);
-\draw[arrow] (ledger) -- (dash);
-\end{tikzpicture}
+For block $B_j$, the chain commitment is:
+\begin{equation}
+    H(B_j) = SHA256(index_j \parallel prevHash_j \parallel merkleRoot_j \parallel policyHash_j)
+\end{equation}
+The verifier accepts a run only when all previous-hash links, Merkle roots, block hashes, and simulated validator signatures satisfy the policy quorum of $4$ out of $5$ validators.
 
-Figure 1: NCL hub-and-spoke architecture, preserving the original system design while replacing the append-only log with a permissioned block ledger.
-\end{center}
+\section{Experimental Results}
 
-\subsection{Sliding-Window Velocity Protocol}
-
-For each sender $a$, the engine stores a rolling log of recent transaction times. A transaction at time $T$ is blocked when the number of transactions in the last $W$ seconds exceeds a policy threshold $\tau$:
-
-\[
-\mathrm{VelocityCount}(a,T)=\sum_i \mathbf{1}(T-t_i < W)
-\]
-
-In the implementation, $W=300$ seconds and $\tau=5$. A deque-backed log is used so outdated timestamps are pruned in amortized constant time.
-
-\subsection{Graph Cycle Detection}
-
-Layering is modeled as a short cycle in the directed transaction graph. For a proposed edge $(u,v)$, NCL checks whether a path already exists from $v$ back to $u$ with depth at most $k$:
-
-\[
-v \rightarrow \cdots \rightarrow u,\quad |P| \leq k
-\]
-
-The implementation uses bounded DFS with $k=3$ and a 900-second graph memory window. This keeps the detector focused on recent circular flows rather than every historical transfer.
-
-\subsection{Permissioned Blockchain Audit Layer}
-
-The advanced implementation upgrades the earlier append-only ledger into a permissioned block ledger. Each transaction decision is converted into a canonical audit record and batched into blocks of 512 records. A block header contains:
-
+\subsection{Simulation Setup}
+The experiment uses a deterministic ABM configuration with $N=10{,}000$ autonomous agents and $100{,}000$ generated transactions:
 \begin{itemize}
-  \item previous block hash,
-  \item Merkle root over transaction decision records,
-  \item policy-version hash,
-  \item proposer node,
-  \item simulated validator signatures from a 4-of-5 quorum.
+    \item \textbf{Honest Agents (95\%):} Stochastic legitimate transactions across participating banks.
+    \item \textbf{Malicious Agents (5\%):} Programmed to execute structuring and circular layering behaviors.
+    \item \textbf{Ledger Configuration:} $512$ records per block, SHA-256 hashing, Merkle roots, and simulated $4/5$ validator quorum.
 \end{itemize}
 
-The chain verifier recomputes every Merkle root, block hash, previous-hash link, and quorum signature. A run is accepted only when the complete audit chain verifies as intact.
+\subsection{Findings}
+The simulation processed $100{,}000$ transactions. As shown in Figure \ref{fig:results}, the engine maintained high precision while sealing the audit trail into permissioned blocks.
 
-\section{Experimental Setup}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.50\textheight, keepaspectratio]{simulation_results.png}
+    \caption{Output Logs from Agent-Based Simulation ($N=10{,}000$)}
+    \label{fig:results}
+\end{figure}
 
-\begin{tabularx}{\linewidth}{@{}l X@{}}
+\begin{table}[H]
+\centering
+\begin{tabular}{lrr}
 \toprule
-\textbf{Parameter} & \textbf{Value}\\
+\textbf{Metric} & \textbf{Value} & \textbf{Interpretation}\\
 \midrule
-Agents & 10,000 autonomous actors\\
-Malicious population & 5\% of agents\\
-Transaction volume & 100,000 transactions\\
-Transaction mix & 55\% honest, 30\% structuring, 15\% ring-layering attempts\\
-Sliding window & 300 seconds\\
-Velocity threshold & 5 sender transactions per window\\
-Cycle detector & Depth-3 DFS with 900-second graph memory\\
-Ledger & 512-record blocks, SHA-256 hash chain, Merkle roots, 4-of-5 validator quorum\\
+Precision & 0.9990 & Very low customer-friction rate\\
+Recall & 0.8539 & Strong attack capture across synthetic behaviors\\
+F1 Score & 0.9207 & Balanced detection performance\\
+Throughput & 102,948 tx/s & Laptop simulation processing speed\\
+Sealed Blocks & 196 & Permissioned ledger audit batches\\
+Chain Integrity & Intact & Hash, Merkle, and quorum checks passed\\
 \bottomrule
-\end{tabularx}
+\end{tabular}
+\caption{NCL 100k transaction simulation summary.}
+\label{tab:summary}
+\end{table}
 
-\section{Results}
-
-\begin{center}
-\fcolorbox{blue!20}{panel}{
-\begin{minipage}{0.96\linewidth}
-\metric{100,000}{Transactions}{deterministic ABM run}\hfill
-\metric{99.90\%}{Precision}{39 false positives}\hfill
-\metric{85.39\%}{Recall}{6,601 false negatives}\hfill
-\metric{0.9207}{F1 Score}{balanced detection metric}
-\end{minipage}}
-\end{center}
-
-\begin{tabularx}{\linewidth}{@{}l r@{\hspace{16mm}}l r@{}}
-\toprule
-\textbf{Confusion Matrix} & \textbf{Count} & \textbf{Ledger / Runtime} & \textbf{Value}\\
-\midrule
-True positives & 38,566 & Sealed blocks & 196\\
-False positives & 39 & Block size & 512\\
-False negatives & 6,601 & Validator quorum & 4/5\\
-True negatives & 54,794 & Processing throughput & 102,948 tx/s\\
-\bottomrule
-\end{tabularx}
-
-\vspace{4pt}
-\begin{tabularx}{\linewidth}{@{}l r@{}}
-\toprule
-\textbf{Detection Breakdown} & \textbf{Count}\\
-\midrule
-Velocity flags & 38,271\\
-Cycle flags & 334\\
-Approved transactions & 61,395\\
-Ledger chain integrity & Intact\\
-\bottomrule
-\end{tabularx}
+The confusion matrix from the reproducible run was:
+\begin{itemize}
+    \item \textbf{True Positives:} 38,566
+    \item \textbf{False Positives:} 39
+    \item \textbf{False Negatives:} 6,601
+    \item \textbf{True Negatives:} 54,794
+\end{itemize}
 
 \section{Discussion}
+\subsection{Architectural Justification: Why a Permissioned Ledger?}
+A centralized database can record transaction decisions, but it also concentrates trust in a single administrator or institution. NCL uses a permissioned ledger model because AML supervision is multi-institutional: banks and regulators need a shared audit object whose integrity can be independently verified. In the prototype, each block binds transaction decisions to a previous hash, Merkle root, policy hash, and validator quorum, making later manipulation detectable.
 
-The upgraded simulation shows that most malicious activity is captured by velocity detection, while graph-cycle detection adds coverage for circular layering behavior. Precision remains high because honest users rarely exceed the rolling velocity threshold, and the bounded graph memory reduces accidental long-horizon cycle matches.
+\subsection{Detection Behavior}
+Most detected malicious activity was captured by the sliding-window velocity protocol, which is expected because structuring is represented as repeated low-value transfers. The graph-cycle detector contributes an additional layer for circular trading rings. This two-part approach keeps the policy interpretable: investigators can see whether a transaction was flagged because of excessive velocity or because it completed a suspicious path.
 
-The ledger layer is not included for speed alone. Its purpose is institutional accountability. A centralized database can store the same rows, but a permissioned ledger creates a shared audit object: each block binds transaction decisions to a policy hash, previous block hash, Merkle root, and validator quorum. This makes later alteration detectable without requiring every participant to trust a single administrator.
-
-\section{Limitations and Future Work}
-
-\begin{itemize}
-  \item The validator signatures are deterministic simulation signatures, not production cryptographic keys managed by real bank HSMs.
-  \item The ABM uses synthetic behavior distributions; deployment would require calibration against legally shareable banking telemetry.
-  \item The current graph detector uses bounded DFS; larger deployments should evaluate streaming graph anomaly methods.
-  \item The policy engine is rules-first; a future version can add supervised risk scoring while keeping rule decisions explainable.
-\end{itemize}
+\subsection{Limitations \& Future Work}
+The current implementation is a deterministic simulation, not a production banking system. Validator signatures are simulated rather than backed by real institutional keys or HSMs. The ABM uses synthetic behavior distributions that would require calibration against legally shareable banking data. Future work should evaluate stochastic windows, richer graph anomaly scoring, and privacy-preserving regulatory data sharing.
 
 \section{Conclusion}
+The Nepal Compliance Ledger simulation provides empirical evidence that algorithmic AML supervision can be modeled as a pre-settlement compliance problem. By combining sliding-window velocity checks, graph-cycle detection, and a permissioned audit ledger, NCL demonstrates how high-frequency financial flows can be filtered and recorded in a tamper-evident system. The upgraded 100k-transaction run shows strong precision, reproducible ledger integrity, and a clear path for expanding the prototype into larger regulatory technology experiments.
 
-NCL demonstrates how real-time AML supervision can be represented as a pre-settlement compliance problem. The advanced implementation scales the simulation to 100,000 transactions and adds a permissioned blockchain audit layer with Merkle verification and validator quorum. The result is a research prototype that connects transaction monitoring, graph-based detection, and tamper-evident regulatory auditability in a single reproducible system.
-
-\section*{References}
-{\small
-\begin{enumerate}[leftmargin=1.4em,itemsep=1pt]
-  \item Financial Action Task Force. International Standards on Combating Money Laundering and the Financing of Terrorism and Proliferation.
-  \item Nepal Rastra Bank. Unified Directives and AML/CFT supervisory guidance.
-  \item Androulaki, E. et al. ``Hyperledger Fabric: A Distributed Operating System for Permissioned Blockchains.'' EuroSys, 2018.
-  \item Nakamoto, S. ``Bitcoin: A Peer-to-Peer Electronic Cash System,'' 2008.
-  \item Savage, D. et al. ``Detection of Money Laundering Groups Using Supervised Learning in Networks.'' arXiv:1608.00708, 2016.
-\end{enumerate}
-}
+\begin{thebibliography}{9}
+\bibitem{fatf} FATF, \textit{International Standards on Combating Money Laundering and the Financing of Terrorism and Proliferation}.
+\bibitem{nrb} Nepal Rastra Bank, \textit{Unified Directives and AML/CFT Supervisory Guidance}.
+\bibitem{fabric} Androulaki, E. et al., ``Hyperledger Fabric: A Distributed Operating System for Permissioned Blockchains,'' EuroSys, 2018.
+\bibitem{bitcoin} Nakamoto, S., ``Bitcoin: A Peer-to-Peer Electronic Cash System,'' 2008.
+\bibitem{amlgraph} Savage, D. et al., ``Detection of Money Laundering Groups Using Supervised Learning in Networks,'' arXiv:1608.00708, 2016.
+\end{thebibliography}
 
 \end{document}

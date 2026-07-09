@@ -20,6 +20,8 @@ The project models a permissioned compliance environment where transactions are 
 - `ncl.tex` - LaTeX source for the research manuscript
 - `models.py` - data models and transaction status enums
 - `config.py` - simulation and compliance parameters
+- `architecture.png` - hub-and-spoke architecture figure used in the PDF
+- `simulation_results.png` - generated 100k-run terminal-style result figure
 - `ncl.pdf` - research manuscript snapshot
 
 ## Run
