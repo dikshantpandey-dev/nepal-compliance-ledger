@@ -1,0 +1,8 @@
+Nepal Compliance Ledger - Reproducible Run Summary
+Transactions: 100000
+Precision: 0.9990
+Recall: 0.8539
+F1 Score: 0.9207
+Throughput: 102,948.19 tx/s
+Blocks: 196
+Chain Integrity: True
